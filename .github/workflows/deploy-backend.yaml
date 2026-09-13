@@ -33,8 +33,10 @@ jobs:
       image_tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
+
       - id: tag
         run: echo "tag=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+
       - name: Build and push image
         run: |
           docker build -t ghcr.io/muthondug/fineract:${{ steps.tag.outputs.tag }} .
@@ -48,6 +50,7 @@ jobs:
       matrix: ${{ steps.gen.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+
       - id: gen
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq yq jq
@@ -59,6 +62,14 @@ jobs:
 
   # --- deploy / restart: one job per matching SACCO, each gated by its own
   #     GitHub Environment (Settings > Environments > <sacco-name>) ---------
+  #
+  # For a Choice SACCO (choice: true), we enforce the desired end state:
+  #   - stop   fineract_<sacco>          (the "standard" stack)
+  #   - start  fineract_<sacco>_choice   (the "choice" stack)
+  #
+  # For a standard SACCO (choice: false), we only touch:
+  #   - start  fineract_<sacco>
+  #
   deploy:
     needs: [build, set-matrix]
     if: ${{ github.event.inputs.action == 'deploy' || github.event.inputs.action == 'restart' }}
@@ -70,7 +81,9 @@ jobs:
     runs-on: [self-hosted, mifos-host]
     environment: ${{ matrix.sacco.name }}
     steps:
-      - name: Roll out ${{ matrix.sacco.name }}
+      # --- Standard stack -------------------------------------------------
+      - name: Roll out ${{ matrix.sacco.name }} (standard)
+        if: ${{ matrix.sacco.choice != true }}
         working-directory: /data/app/mifos/${{ matrix.sacco.name }}
         env:
           IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
@@ -79,6 +92,7 @@ jobs:
           docker compose -p fineract-${{ matrix.sacco.name }} pull
           docker compose -p fineract-${{ matrix.sacco.name }} up -d --force-recreate
 
+      # --- Choice stack ---------------------------------------------------
       - name: Roll out ${{ matrix.sacco.name }}_choice
         if: ${{ matrix.sacco.choice == true }}
         working-directory: /data/app/mifos/${{ matrix.sacco.name }}_choice
@@ -88,15 +102,36 @@ jobs:
           docker compose -p fineract-${{ matrix.sacco.name }}-choice pull
           docker compose -p fineract-${{ matrix.sacco.name }}-choice up -d --force-recreate
 
+      # --- Choice SACCO: ensure the standard stack is stopped -------------
+      - name: Stop standard stack for choice SACCO ${{ matrix.sacco.name }}
+        if: ${{ matrix.sacco.choice == true }}
+        working-directory: /data/app/mifos/${{ matrix.sacco.name }}
+        run: |
+          docker compose -p fineract-${{ matrix.sacco.name }} down || true
+
   # --- stop: same matrix, no build needed ----------------------------------
+  #
+  # For a Choice SACCO, "stop" means stop the choice stack (the active one).
+  # For a standard SACCO, "stop" means stop the standard stack.
+  #
   stop:
     needs: set-matrix
     if: ${{ github.event.inputs.action == 'stop' }}
     strategy:
       matrix:
         sacco: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+      fail-fast: false
     runs-on: [self-hosted, mifos-host]
     environment: ${{ matrix.sacco.name }}
     steps:
-      - name: Stop ${{ matrix.sacco.name }}
+      - name: Stop ${{ matrix.sacco.name }} (standard)
+        if: ${{ matrix.sacco.choice != true }}
         working-directory: /data/app/mifos/${{ matrix.sacco.name }}
+        run: |
+          docker compose -p fineract-${{ matrix.sacco.name }} down
+
+      - name: Stop ${{ matrix.sacco.name }}_choice
+        if: ${{ matrix.sacco.choice == true }}
+        working-directory: /data/app/mifos/${{ matrix.sacco.name }}_choice
+        run: |
+          docker compose -p fineract-${{ matrix.sacco.name }}-choice down
