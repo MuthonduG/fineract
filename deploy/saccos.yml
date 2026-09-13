@@ -1,0 +1,564 @@
+# deploy/saccos.yml
+# Lives in BOTH repos (fineract and web-app), or in a shared "deploy-config" repo
+# checked out as a step if you'd rather maintain one copy. Each entry becomes one
+# GitHub Environment named `sacco.name` in whichever repo consumes it.
+#
+# Add a SACCO here when it's ready to move off the legacy GitLab/supervisorctl
+# stack onto the new docker-compose based deployment.
+
+saccos:
+  # ---------------------------------------------------------------------------
+  # _choice instances (choice: true)
+  # ---------------------------------------------------------------------------
+  - name: ackkangemiukristo
+    choice: true
+    port_backend: 8101
+    port_frontend: 4101
+
+  - name: demo
+    choice: true
+    port_backend: 8102
+    port_frontend: 4102
+
+  - name: finmat
+    choice: true
+    port_backend: 8103
+    port_frontend: 4103
+
+  - name: iron
+    choice: true
+    port_backend: 8104
+    port_frontend: 4104
+
+  - name: kioo
+    choice: true
+    port_backend: 8105
+    port_frontend: 4105
+
+  - name: maarabusiness
+    choice: true
+    port_backend: 8106
+    port_frontend: 4106
+
+  - name: mehta
+    choice: true
+    port_backend: 8107
+    port_frontend: 4107
+
+  - name: musumari
+    choice: true
+    port_backend: 8108
+    port_frontend: 4108
+
+  - name: namgero
+    choice: true
+    port_backend: 8109
+    port_frontend: 4109
+
+  - name: sakisa
+    choice: true
+    port_backend: 8110
+    port_frontend: 4110
+
+  - name: thindaju
+    choice: true
+    port_backend: 8111
+    port_frontend: 4111
+
+  - name: superiorhotel
+    choice: true
+    port_backend: 8112
+    port_frontend: 4112
+
+  - name: nuru
+    choice: true
+    port_backend: 8113
+    port_frontend: 4113
+
+  - name: sindikiza
+    choice: true
+    port_backend: 8114
+    port_frontend: 4114
+
+  - name: potterhouse
+    choice: true
+    port_backend: 8115
+    port_frontend: 4115
+
+  - name: muthaigastaff
+    choice: true
+    port_backend: 8116
+    port_frontend: 4116
+
+  - name: notaff
+    choice: true
+    port_backend: 8117
+    port_frontend: 4117
+
+  - name: cesi
+    choice: true
+    port_backend: 8118
+    port_frontend: 4118
+
+  - name: safepak
+    choice: true
+    port_backend: 8119
+    port_frontend: 4119
+
+  - name: saccotest
+    choice: true
+    port_backend: 8120
+    port_frontend: 4120
+
+  # ---------------------------------------------------------------------------
+  # Standard instances (choice: false)
+  # ---------------------------------------------------------------------------
+  - name: KiberaBodaboda
+    choice: false
+    port_backend: 8121
+    port_frontend: 4121
+
+  - name: aibk
+    choice: false
+    port_backend: 8122
+    port_frontend: 4122
+
+  - name: apex
+    choice: false
+    port_backend: 8123
+    port_frontend: 4123
+
+  - name: athipack
+    choice: false
+    port_backend: 8124
+    port_frontend: 4124
+
+  - name: billwayssacco
+    choice: false
+    port_backend: 8125
+    port_frontend: 4125
+
+  - name: blackpetals
+    choice: false
+    port_backend: 8126
+    port_frontend: 4126
+
+  - name: cbkbodaboda
+    choice: false
+    port_backend: 8127
+    port_frontend: 4127
+
+  - name: cimacosamaritans
+    choice: false
+    port_backend: 8128
+    port_frontend: 4128
+
+  - name: cleanshelf
+    choice: false
+    port_backend: 8129
+    port_frontend: 4129
+
+  - name: daima
+    choice: false
+    port_backend: 8130
+    port_frontend: 4130
+
+  - name: eagletrin
+    choice: false
+    port_backend: 8131
+    port_frontend: 4131
+
+  - name: eacables
+    choice: false
+    port_backend: 8132
+    port_frontend: 4132
+
+  - name: easternbypass
+    choice: false
+    port_backend: 8133
+    port_frontend: 4133
+
+  - name: empuan
+    choice: false
+    port_backend: 8134
+    port_frontend: 4134
+
+  - name: emuki
+    choice: false
+    port_backend: 8135
+    port_frontend: 4135
+
+  - name: energy
+    choice: false
+    port_backend: 8136
+    port_frontend: 4136
+
+  - name: evolutionmovers
+    choice: false
+    port_backend: 8137
+    port_frontend: 4137
+
+  - name: faidisha
+    choice: false
+    port_backend: 8138
+    port_frontend: 4138
+
+  - name: fairseat
+    choice: false
+    port_backend: 8139
+    port_frontend: 4139
+
+  - name: freedomcredit
+    choice: false
+    port_backend: 8140
+    port_frontend: 4140
+
+  - name: gkkrt
+    choice: false
+    port_backend: 8141
+    port_frontend: 4141
+
+  - name: halekis
+    choice: false
+    port_backend: 8142
+    port_frontend: 4142
+
+  - name: huruma
+    choice: false
+    port_backend: 8143
+    port_frontend: 4143
+
+  - name: indimanje
+    choice: false
+    port_backend: 8144
+    port_frontend: 4144
+
+  - name: jiungepamoja
+    choice: false
+    port_backend: 8145
+    port_frontend: 4145
+
+  - name: kariranasacco
+    choice: false
+    port_backend: 8146
+    port_frontend: 4146
+
+  - name: kiberamashinani
+    choice: false
+    port_backend: 8147
+    port_frontend: 4147
+
+  - name: kigoroventures
+    choice: false
+    port_backend: 8148
+    port_frontend: 4148
+
+  - name: kinatwa
+    choice: false
+    port_backend: 8149
+    port_frontend: 4149
+
+  - name: kivulicredit
+    choice: false
+    port_backend: 8150
+    port_frontend: 4150
+
+  - name: ksmt
+    choice: false
+    port_backend: 8151
+    port_frontend: 4151
+
+  - name: ktrans
+    choice: false
+    port_backend: 8152
+    port_frontend: 4152
+
+  - name: ktw
+    choice: false
+    port_backend: 8153
+    port_frontend: 4153
+
+  - name: lesedi
+    choice: false
+    port_backend: 8154
+    port_frontend: 4154
+
+  - name: lisccosacco
+    choice: false
+    port_backend: 8155
+    port_frontend: 4155
+
+  - name: longhorn
+    choice: false
+    port_backend: 8156
+    port_frontend: 4156
+
+  - name: lukenyaschool
+    choice: false
+    port_backend: 8157
+    port_frontend: 4157
+
+  - name: macly
+    choice: false
+    port_backend: 8158
+    port_frontend: 4158
+
+  - name: majicare
+    choice: false
+    port_backend: 8159
+    port_frontend: 4159
+
+  - name: mao
+    choice: false
+    port_backend: 8160
+    port_frontend: 4160
+
+  - name: maono
+    choice: false
+    port_backend: 8161
+    port_frontend: 4161
+
+  - name: maridady
+    choice: false
+    port_backend: 8162
+    port_frontend: 4162
+
+  - name: megauniversal
+    choice: false
+    port_backend: 8163
+    port_frontend: 4163
+
+  - name: midlandsacco
+    choice: false
+    port_backend: 8164
+    port_frontend: 4164
+
+  - name: moneycloud
+    choice: false
+    port_backend: 8165
+    port_frontend: 4165
+
+  - name: mugmuguga
+    choice: false
+    port_backend: 8166
+    port_frontend: 4166
+
+  - name: mywagepay
+    choice: false
+    port_backend: 8167
+    port_frontend: 4167
+
+  - name: nafuu
+    choice: false
+    port_backend: 8168
+    port_frontend: 4168
+
+  - name: nakaski
+    choice: false
+    port_backend: 8169
+    port_frontend: 4169
+
+  - name: neemat
+    choice: false
+    port_backend: 8170
+    port_frontend: 4170
+
+  - name: neil
+    choice: false
+    port_backend: 8171
+    port_frontend: 4171
+
+  - name: nesadi
+    choice: false
+    port_backend: 8172
+    port_frontend: 4172
+
+  - name: ngorongo
+    choice: false
+    port_backend: 8173
+    port_frontend: 4173
+
+  - name: nivea
+    choice: false
+    port_backend: 8174
+    port_frontend: 4174
+
+  - name: obomo
+    choice: false
+    port_backend: 8175
+    port_frontend: 4175
+
+  - name: olesereni
+    choice: false
+    port_backend: 8176
+    port_frontend: 4176
+
+  - name: oromats
+    choice: false
+    port_backend: 8177
+    port_frontend: 4177
+
+  - name: passerine
+    choice: false
+    port_backend: 8178
+    port_frontend: 4178
+
+  - name: parkwestboda
+    choice: false
+    port_backend: 8179
+    port_frontend: 4179
+
+  - name: pegasus
+    choice: false
+    port_backend: 8180
+    port_frontend: 4180
+
+  - name: purasacco
+    choice: false
+    port_backend: 8181
+    port_frontend: 4181
+
+  - name: quickbus
+    choice: false
+    port_backend: 8182
+    port_frontend: 4182
+
+  - name: regalpharm
+    choice: false
+    port_backend: 8183
+    port_frontend: 4183
+
+  - name: riverlong
+    choice: false
+    port_backend: 8184
+    port_frontend: 4184
+
+  - name: rodlitho
+    choice: false
+    port_backend: 8185
+    port_frontend: 4185
+
+  - name: samsyo
+    choice: false
+    port_backend: 8186
+    port_frontend: 4186
+
+  - name: sbmo
+    choice: false
+    port_backend: 8187
+    port_frontend: 4187
+
+  - name: shalom
+    choice: false
+    port_backend: 8188
+    port_frontend: 4188
+
+  - name: shamiri
+    choice: false
+    port_backend: 8189
+    port_frontend: 4189
+
+  - name: silver
+    choice: false
+    port_backend: 8190
+    port_frontend: 4190
+
+  - name: simbacement
+    choice: false
+    port_backend: 8191
+    port_frontend: 4191
+
+  - name: sijarashakiva
+    choice: false
+    port_backend: 8192
+    port_frontend: 4192
+
+  - name: sossacco
+    choice: false
+    port_backend: 8193
+    port_frontend: 4193
+
+  - name: stemarcredit
+    choice: false
+    port_backend: 8194
+    port_frontend: 4194
+
+  - name: stmarys
+    choice: false
+    port_backend: 8195
+    port_frontend: 4195
+
+  - name: supabrite
+    choice: false
+    port_backend: 8196
+    port_frontend: 4196
+
+  - name: tarda
+    choice: false
+    port_backend: 8197
+    port_frontend: 4197
+
+  - name: tembe
+    choice: false
+    port_backend: 8198
+    port_frontend: 4198
+
+  - name: testtest
+    choice: false
+    port_backend: 8199
+    port_frontend: 4199
+
+  - name: tripples
+    choice: false
+    port_backend: 8200
+    port_frontend: 4200
+
+  - name: ttm
+    choice: false
+    port_backend: 8201
+    port_frontend: 4201
+
+  - name: utimo
+    choice: false
+    port_backend: 8202
+    port_frontend: 4202
+
+  - name: vashtraders
+    choice: false
+    port_backend: 8203
+    port_frontend: 4203
+
+  - name: vipo
+    choice: false
+    port_backend: 8204
+    port_frontend: 4204
+
+  - name: wakulimaye
+    choice: false
+    port_backend: 8205
+    port_frontend: 4205
+
+  - name: wanarangi
+    choice: false
+    port_backend: 8206
+    port_frontend: 4206
+
+  - name: waomaera
+    choice: false
+    port_backend: 8207
+    port_frontend: 4207
+
+  - name: warrensasini
+    choice: false
+    port_backend: 8208
+    port_frontend: 4208
+
+  - name: wellspring
+    choice: false
+    port_backend: 8209
+    port_frontend: 4209
+
+  - name: zionam
+    choice: false
+    port_backend: 8210
+    port_frontend: 4210
