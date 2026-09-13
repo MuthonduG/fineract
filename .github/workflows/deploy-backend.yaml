@@ -1,0 +1,102 @@
+# .github/workflows/deploy-backend.yml  (lives in the `fineract` repo)
+#
+# Mirrors the legacy generate_prod_ci_yml.sh flow (deploy -> restart -> stop,
+# one job set per SACCO) but generates the matrix dynamically from
+# deploy/saccos.yml instead of pre-baking a static YAML file, and gives each
+# SACCO its own GitHub Environment for scoped secrets + deployment history.
+#
+# This workflow only ever touches the NEW mifos stack. It has no knowledge of
+# the legacy fineract_<sacco> supervisorctl instances, which stay on GitLab.
+
+name: Deploy Backend (mifos-fineract)
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "deploy (build+roll out) | restart (roll out existing image) | stop"
+        required: true
+        default: "restart"
+        type: choice
+        options: [deploy, restart, stop]
+      sacco:
+        description: 'SACCO name from deploy/saccos.yml, or "all"'
+        required: true
+        default: "all"
+
+jobs:
+  # --- Build once, reused by every SACCO's deploy job ---------------------
+  build:
+    if: ${{ github.event.inputs.action != 'stop' }}
+    runs-on: [self-hosted, mifos-build]
+    outputs:
+      image_tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: tag
+        run: echo "tag=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+      - name: Build and push image
+        run: |
+          docker build -t ghcr.io/muthondug/fineract:${{ steps.tag.outputs.tag }} .
+          echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push ghcr.io/muthondug/fineract:${{ steps.tag.outputs.tag }}
+
+  # --- Turn the manifest (filtered by the `sacco` input) into a matrix ----
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.gen.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: gen
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq yq jq
+          if [ "${{ github.event.inputs.sacco }}" = "all" ]; then
+            echo "matrix=$(yq -o=json '.saccos' deploy/saccos.yml | jq -c .)" >> "$GITHUB_OUTPUT"
+          else
+            echo "matrix=$(yq -o=json '.saccos[] | select(.name=="${{ github.event.inputs.sacco }}")' deploy/saccos.yml | jq -s -c .)" >> "$GITHUB_OUTPUT"
+          fi
+
+  # --- deploy / restart: one job per matching SACCO, each gated by its own
+  #     GitHub Environment (Settings > Environments > <sacco-name>) ---------
+  deploy:
+    needs: [build, set-matrix]
+    if: ${{ github.event.inputs.action == 'deploy' || github.event.inputs.action == 'restart' }}
+    strategy:
+      matrix:
+        sacco: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+      max-parallel: 3   # keep this modest -- everything shares one host
+      fail-fast: false
+    runs-on: [self-hosted, mifos-host]
+    environment: ${{ matrix.sacco.name }}
+    steps:
+      - name: Roll out ${{ matrix.sacco.name }}
+        working-directory: /data/app/mifos/${{ matrix.sacco.name }}
+        env:
+          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+          BACKEND_PORT: ${{ matrix.sacco.port_backend }}
+        run: |
+          docker compose -p fineract-${{ matrix.sacco.name }} pull
+          docker compose -p fineract-${{ matrix.sacco.name }} up -d --force-recreate
+
+      - name: Roll out ${{ matrix.sacco.name }}_choice
+        if: ${{ matrix.sacco.choice == true }}
+        working-directory: /data/app/mifos/${{ matrix.sacco.name }}_choice
+        env:
+          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+        run: |
+          docker compose -p fineract-${{ matrix.sacco.name }}-choice pull
+          docker compose -p fineract-${{ matrix.sacco.name }}-choice up -d --force-recreate
+
+  # --- stop: same matrix, no build needed ----------------------------------
+  stop:
+    needs: set-matrix
+    if: ${{ github.event.inputs.action == 'stop' }}
+    strategy:
+      matrix:
+        sacco: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+    runs-on: [self-hosted, mifos-host]
+    environment: ${{ matrix.sacco.name }}
+    steps:
+      - name: Stop ${{ matrix.sacco.name }}
+        working-directory: /data/app/mifos/${{ matrix.sacco.name }}
